@@ -25,6 +25,10 @@ class FadeTransitionRouter extends Component {
     console.log("Constructor");
   }
 
+  componentDidMount() {
+    console.log("Component did mount")
+  }
+
   render() {
     return (
       <Location>

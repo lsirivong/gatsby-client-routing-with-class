@@ -1,31 +1,62 @@
-import React from "react"
-import { Link } from "gatsby"
+import React, { Component } from "react"
+import { Router, Link, Location } from "@reach/router"
+import { TransitionGroup, CSSTransition } from "react-transition-group"
+// import "./main.css"
 
-import typography from "../utils/typography"
-const { rhythm } = typography
+const Layout = ({ children }) => (
+  <div className="app">
+    <nav className="nav">
+      <Link to="/">Page 1</Link> <Link to="page/2">Page 2</Link>
+      {` `}
+      <Link to="page/3">Page 3</Link> <Link to="page/4">Page 4</Link>
+    </nav>
 
-class DefaultLayout extends React.Component {
+    <FadeTransitionRouter>
+      <Page path="/" page="1" />
+      <Page path="page/:page" />
+    </FadeTransitionRouter>
+  </div>
+)
+
+class FadeTransitionRouter extends Component {
+  constructor(props) {
+    super(props);
+    // Constructor should only run once.
+    console.log("Constructor");
+  }
+
+  componentDidMount() {
+    console.log("Component did mount");
+  }
+
+  componentDidUpdate(prevProps) {
+    console.log("Component did update");
+  }
+
   render() {
     return (
-      <div
-        style={{
-          margin: `0 auto`,
-          marginTop: rhythm(1.5),
-          marginBottom: rhythm(1.5),
-          maxWidth: 650,
-          paddingLeft: rhythm(3 / 4),
-          paddingRight: rhythm(3 / 4),
-        }}
-      >
-        <Link style={{ textDecoration: `none` }} to="/">
-          <h3 style={{ color: `tomato`, marginBottom: rhythm(1.5) }}>
-            Example of adding client only paths
-          </h3>
-        </Link>
-        {this.props.children}
-      </div>
-    )
+      <Location>
+        {({location}) => <TransitionGroup className="transition-group">
+            <CSSTransition key={location.key} classNames="fade" timeout={500}>
+              <Router location={location} className="router">
+                {this.props.children}
+              </Router>
+            </CSSTransition>
+          </TransitionGroup>
+        }
+      </Location>
+    );
   }
 }
 
-export default DefaultLayout
+const Page = props => (
+  <div
+    className="page"
+    style={{ background: `hsl(${props.page * 75}, 60%, 60%)` }}
+  >
+    {props.page}
+  </div>
+)
+
+
+export default Layout
